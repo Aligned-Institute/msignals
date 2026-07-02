@@ -1,0 +1,39 @@
+{
+  "system": {
+    "name": "mSignals ICU Patient State Alignment Engine",
+    "version": "1.0.0",
+    "domain_context": "icu_monitoring"
+  },
+  "agents": {
+    "vas": {
+      "publish_threshold": 0.90,
+      "gate_threshold": 0.70,
+      "ttl_seconds": 30,
+      "staleness_penalty": 0.15
+    },
+    "lra": {
+      "publish_threshold": 0.85,
+      "gate_threshold": 0.65,
+      "ttl_seconds": 21600,
+      "staleness_penalty": 0.10
+    },
+    "pha": {
+      "publish_threshold": 0.99,
+      "gate_threshold": 0.85,
+      "ttl_seconds": null,
+      "staleness_penalty": 0.0
+    },
+    "nla": {
+      "publish_threshold": 0.70,
+      "gate_threshold": 0.50,
+      "ttl_seconds": 14400,
+      "staleness_penalty": 0.08
+    },
+    "hia": {
+      "publish_threshold": 0.75,
+      "gate_threshold": 0.55,
+      "ttl_seconds": 86400,
+      "staleness_penalty": 0.05
+    }
+  }
+}

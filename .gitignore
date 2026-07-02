@@ -1,0 +1,23 @@
+# Python cache & testing
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Node & Next.js build
+node_modules/
+.next/
+out/
+build/
+.env*.local
+
+# MIMIC Dataset
+data/
+
+# OS specific files
+.DS_Store
+Thumbs.db
