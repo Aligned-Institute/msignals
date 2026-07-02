@@ -85,7 +85,7 @@ async def test_nla_keyword_scanning():
     # Test stub NLA with custom notes containing deterioration keywords
     notes = ["Patient has severe respiratory distress with accessory muscles visible."]
     output = await agent.fetch("patient-123", notes=notes, evaluation_time=eval_time)
-    assert "distress" in output.data["deterioration_keywords_found"]
+    assert "respiratory distress" in output.data["deterioration_keywords_found"]
     assert "accessory muscles" in output.data["deterioration_keywords_found"]
     assert "deterioration_keyword" in output.escalation_flags
     assert "negative_clinical_sentiment" in output.escalation_flags
