@@ -3,7 +3,7 @@
 **Issued:** 2026-07-02
 **From:** Antigravity AI
 **To:** Next Agent
-**Current Status:** Phase 0, 1, and 2 Complete — Awaiting Phase 3 (Validation Study)
+**Current Status:** Phase 0, 1, and 2 Complete — Awaiting Phase 3 (Validation Study) & Schmidt Sciences Enhancements
 
 ---
 
@@ -81,3 +81,31 @@ Your priority is to conduct **Phase 3 — Validation Study and Publication**. Fo
     *   Assert false alarm rates stay below the threshold limits.
 4.  **Draft Manuscript:**
     *   Prepare results for publication targeting *Critical Care Medicine* or *JAMIA* to provide the peer-reviewed clinical validation required for future FDA 510(k) applications.
+
+---
+
+## 6. Schmidt Sciences Proposal Enhancements (Future Phases)
+
+To align with the Tier 2 Schmidt Sciences proposal specifications, the next agent must architect and implement the following primitives:
+
+### 6.1 Multi-Principal Agent Registry (Phase 6)
+*   **Database Migrations:** Add `principal_id` (UUID), `payment_address` (text), `scope_constraints` (JSONB), and `reputation_score` (float) columns to the `source_registry` table schema.
+*   **Access Control:** Reject any agent query during fetch cycles that is not registered and validated within active scope boundaries.
+
+### 6.2 Dual-Node Consensus Orchestrator (Phase 6)
+*   **Active-Active Execution:** Configure the `ICUCoordinator` to run in a dual-node topology (Primary and Secondary instances).
+*   **Consensus Check:** Compare AlignedState output hashes from both nodes. Disagreement on final outputs raises a `consensus_failure` alert to the `alerts` database table and halts settlement.
+
+### 6.3 Resilient Sub-Agent Triads (Phase 7)
+*   **Refactor Agents:** Transition each raw domain agent in `src/agents/` to a structured Runner-Watcher-Verifier triad:
+    *   `Runner`: Stateful/stateless telemetry data collector.
+    *   `Watcher`: Process health monitor enforcing agent TTL, executing respawns, and reporting failures to the Overseer.
+    *   `Verifier`: Output format validator gating coordinator publication.
+
+### 6.4 Continuous Operation Mode (Phase 8)
+*   **Scheduler:** Trigger runner operations autonomously on fixed TTL durations (`dispatch_schedule` table).
+*   **Live CAS & Alerts:** Update the aligned states table incrementally and trigger events to `alerts` when confidence shifts exceed delta bounds.
+
+### 6.5 x402 Micropayments & ZKP Verification (Phase 9)
+*   **Micropayments:** Gate Circle USDC payments based on quality scores evaluated by the `PaymentAuthorizationGate`.
+*   **ADP 8.5 ZKP Proofs:** Incorporate zero-knowledge tokens verifying context provenance on the Arc L1 blockchain.
