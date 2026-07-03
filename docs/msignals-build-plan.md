@@ -2,7 +2,7 @@
 
 **Version:** 0.1 · 2026-07-01
 **Author:** ALI / Anthony Monroy
-**Status:** Pre-build — planning
+**Status:** Phase 0, 1, and 2 Complete — Awaiting Phase 3 (Validation Study)
 **Goal:** Validate the conflict-aware patient state alignment thesis against real ICU data, build a demonstration dashboard, and generate the clinical validation evidence needed for regulated deployment.
 
 ---
@@ -17,7 +17,7 @@ The entry point is **MIMIC-IV**: a publicly available, fully de-identified ICU d
 
 ---
 
-## Phase 0 — MIMIC-IV Data Foundation
+## Phase 0 — MIMIC-IV Data Foundation [COMPLETE]
 
 **Duration:** 3–4 weeks
 **Goal:** Stand up mSignals agents reading real ICU data from MIMIC-IV. No frontend. No clinical UI. Just the alignment engine working.
@@ -151,7 +151,7 @@ Extend Austin's `AlignmentCoordinator` with ICU-specific:
 
 ---
 
-## Phase 1 — Conflict Detection Engine
+## Phase 1 — Conflict Detection Engine [COMPLETE]
 
 **Duration:** 4–6 weeks
 **Goal:** A working synthesis engine that detects compound clinical signals earlier than single-domain approaches. Validated on MIMIC-IV retrospectively.
@@ -223,7 +223,7 @@ Run mSignals on all MIMIC-IV ICU stays with known outcomes (sepsis: ICD A41.x, A
 
 ---
 
-## Phase 2 — ICU Dashboard (Research / Demonstration)
+## Phase 2 — ICU Dashboard (Research / Demonstration) [COMPLETE]
 
 **Duration:** 6–8 weeks
 **Goal:** A visual tool that makes the conflict-aware synthesis engine legible to clinicians. Not for clinical use — no FDA required. Used for research validation, stakeholder demos, and pilot site conversations.
@@ -334,7 +334,7 @@ Existing systems show you a number. mSignals shows you a conversation between da
 
 ---
 
-## Phase 3 — Validation Study and Publication
+## Phase 3 — Validation Study and Publication [NEXT PHASE]
 
 **Duration:** 8–12 weeks
 **Goal:** Peer-reviewable evidence that mSignals conflict-aware synthesis outperforms existing approaches on MIMIC-IV. This is the AWP paper — published through ASII.
