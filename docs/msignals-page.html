@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>mSignals: Multi-Agent ICU Patient State Alignment — Aligned Sovereign Intelligence Institute</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap');
+
+    html,
+    body {
+      color-scheme: dark;
+      background: #0d1229 !important;
+      color: #e8eaf6 !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 48px 16px 0;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 44px;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(24px, 4.5vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.25;
+      background: linear-gradient(135deg, #ffffff 30%, #a8d8e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .eyebrow {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #22d3ee;
+      margin-top: 10px;
+    }
+
+    .abstract {
+      font-size: clamp(14px, 2vw, 17px);
+      color: #a8b8d8;
+      line-height: 1.8;
+      max-width: 720px;
+      margin: 24px auto 0;
+      text-align: left;
+    }
+
+    .cta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px;
+      margin: 36px 0;
+    }
+
+    .cta {
+      display: block;
+      padding: 18px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+      text-decoration: none;
+    }
+
+    .cta-primary {
+      background: linear-gradient(135deg, #0e7490 0%, #0891b2 100%);
+      color: #fff;
+      border: 1px solid #06b6d4;
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+    }
+
+    .cta-primary:hover {
+      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
+      border-color: #22d3ee;
+    }
+
+    .cta-secondary {
+      background: rgba(19, 31, 58, 0.45);
+      color: #e8eaf6;
+      border: 1px solid #1e2e50;
+      backdrop-filter: blur(8px);
+    }
+
+    .cta-secondary:hover {
+      border-color: #22d3ee;
+      background: rgba(19, 31, 58, 0.65);
+    }
+
+    .cta-disabled {
+      background: rgba(19, 31, 58, 0.25);
+      color: #e8eaf6;
+      border: 1px solid #1a2540;
+      backdrop-filter: blur(8px);
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .cta-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #22d3ee;
+      margin-bottom: 6px;
+    }
+
+    .cta-primary .cta-label {
+      color: #a5f3fc;
+    }
+
+    .cta-disabled .cta-label {
+      color: #4b6080;
+    }
+
+    .cta-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .cta-disabled .cta-title {
+      color: #4b6080;
+    }
+
+    .cta-sub {
+      font-size: 12px;
+      color: #7a8fb0;
+      margin-top: 3px;
+    }
+
+    .cta-disabled .cta-sub {
+      color: #2e3f5c;
+    }
+
+    .metrics {
+      background: rgba(17, 24, 39, 0.45);
+      border: 1px solid #1e2e50;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin: 36px 0;
+      backdrop-filter: blur(12px);
+    }
+
+    .metrics-head {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #22d3ee;
+      margin-bottom: 20px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+    }
+
+    .metric-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+      color: #4ade80;
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: #6b7fa3;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .pilot-note {
+      font-size: 12px;
+      color: #7a8fb0;
+      margin-top: 18px;
+      line-height: 1.6;
+    }
+
+    .reference {
+      background: rgba(17, 24, 39, 0.45);
+      border: 1px solid #1e2e50;
+      border-radius: 10px;
+      padding: 18px 24px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: #6b7fa3;
+      line-height: 1.7;
+      backdrop-filter: blur(8px);
+    }
+
+    .reference a {
+      color: #22d3ee;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .reference a:hover {
+      color: #67e8f9;
+      text-decoration: underline;
+    }
+
+    .reference strong {
+      color: #a8b8d8;
+    }
+
+    .conflict-flow {
+      margin: 20px 0 4px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .flow-box {
+      background: rgba(8, 145, 178, 0.08);
+      border: 1px solid #164e63;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #a8b8d8;
+      line-height: 1.5;
+    }
+
+    .flow-box strong {
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      color: #22d3ee;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .flow-box.conflict {
+      border-color: #7c3aed;
+      background: rgba(124, 58, 237, 0.08);
+    }
+
+    .flow-box.conflict strong {
+      color: #a78bfa;
+    }
+
+    .flow-box.output {
+      border-color: #065f46;
+      background: rgba(6, 95, 70, 0.1);
+    }
+
+    .flow-box.output strong {
+      color: #4ade80;
+    }
+
+    .flow-arrow {
+      color: #2dd4bf;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #3a4d6a;
+      padding: 24px 0 32px;
+    }
+
+    .footer a {
+      color: #22d3ee;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media(max-width:600px){
+      body { padding: 32px 12px 0; }
+      .cta-grid { grid-template-columns: 1fr 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .metrics { padding: 18px; }
+      .conflict-flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+    @media(max-width:380px){
+      .cta-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>mSignals: Multi-Agent ICU Patient State Alignment</h1>
+    <div class="eyebrow">Multi-Agent Healthcare &middot; Conflict-Aware Clinical Synthesis</div>
+    <p class="abstract">
+      ICU patients generate data across five independent clinical systems simultaneously — and no existing system aligns them. <strong>mSignals</strong> applies multi-agent data alignment architecture to acute care monitoring: assigning independent agents to vital signs, laboratory results, pharmacy, clinical notes, and patient history, enforcing freshness and confidence contracts on each, and synthesizing an aligned patient state where inter-agent conflicts are surfaced as first-class clinical signals. When a vital signs agent reports hemodynamic stability and a laboratory agent reports rising lactate — that divergence is the sepsis early warning. mSignals makes it visible. No existing score-fusion system can.
+    </p>
+  </div>
+
+  <div class="cta-grid">
+    <a class="cta cta-disabled" aria-disabled="true">
+      <div class="cta-label">Interactive</div>
+      <div class="cta-title">Launch Preso</div>
+      <div class="cta-sub">Coming soon</div>
+    </a>
+    <a href="https://drive.google.com/file/d/1UamcqqMhAn0mfmiV457owTnXBG_dL7AR/view?usp=sharing" class="cta cta-primary" target="_blank" rel="noopener">
+      <div class="cta-label">Document</div>
+      <div class="cta-title">Read the Paper</div>
+      <div class="cta-sub">Full technical white paper</div>
+    </a>
+    <a href="https://github.com/Aligned-Institute/msignals" class="cta cta-secondary" target="_blank" rel="noopener">
+      <div class="cta-label">Open Source</div>
+      <div class="cta-title">GitHub Repo</div>
+      <div class="cta-sub">mSignals active codebase</div>
+    </a>
+    <a href="https://asiinst.com/msignals-faq" class="cta cta-secondary" target="_blank" rel="noopener">
+      <div class="cta-label">Clinical &amp; Technical</div>
+      <div class="cta-title">mSignals FAQ</div>
+      <div class="cta-sub">Architecture &amp; validation details</div>
+    </a>
+  </div>
+
+  <div class="metrics">
+    <div class="metrics-head">Clinical Problem &mdash; Why mSignals Exists</div>
+    <div class="metrics-grid">
+      <div>
+        <div class="metric-val">700/day</div>
+        <div class="metric-label">ICU alarms per patient<br>94–99% are false positives</div>
+      </div>
+      <div>
+        <div class="metric-val">$24B</div>
+        <div class="metric-label">Annual preventable sepsis cost<br>US healthcare system</div>
+      </div>
+      <div>
+        <div class="metric-val">≥0.82</div>
+        <div class="metric-label">AUROC target<br>Sepsis detection at 6h horizon</div>
+      </div>
+      <div>
+        <div class="metric-val">5 Agents</div>
+        <div class="metric-label">Clinical data domains<br>Vitals · Labs · Pharmacy · Notes · History</div>
+      </div>
+    </div>
+    <p class="pilot-note">
+      The mSignals validation study runs compound detection rules retrospectively against MIMIC-IV (40,000+ de-identified ICU stays, Beth Israel Deaconess Medical Center) — the standard dataset for ICU AI research. The study compares conflict-aware synthesis against single-parameter threshold alarms, the Epic Deterioration Index, and SOFA score trajectory. The MIMIC-IV validation artifact serves simultaneously as thesis proof, enterprise sales evidence, and the clinical evidence package for FDA 510(k) submission.
+    </p>
+  </div>
+
+  <div class="reference">
+    <strong>Architecture: Conflict-Aware Synthesis Pipeline</strong><br>
+    Each agent fetches its clinical domain independently. The Governor layer applies freshness TTL contracts and staleness penalties before any agent output reaches synthesis. The ICU Coordinator runs five compound detection rules — sepsis, AKI, respiratory failure, drug-physiology conflict, and fluid overload — and produces an <strong>Aligned Patient State</strong> where inter-agent disagreements are named, attributed, and resolved with a directive. Every action is logged to an immutable audit trail satisfying HIPAA §164.312(b) and the 21st Century Cures Act CDS attribution requirement.
+    <div class="conflict-flow">
+      <div class="flow-box">
+        <strong>Agent Layer</strong>
+        VAS · LRA · PHA<br>NLA · HIA<br>Independent fetches<br>Governor contracts
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box conflict">
+        <strong>Conflict Detection</strong>
+        VAS stable<br>LRA lactate rising<br>↕ Divergence = signal<br>not noise
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box output">
+        <strong>Aligned State</strong>
+        Resolution directive<br>Agent attribution<br>Human Gate tier<br>Audit log entry
+      </div>
+    </div>
+  </div>
+
+  <div class="reference">
+    <strong>Platform Context:</strong> mSignals is a vertical of the <a href="https://asiinst.com/csignals" target="_blank" rel="noopener">Multi-Agent Signals (MAS)</a> platform — the same alignment coordinator, Governor Contract model, and Human Gate architecture that powers cSignals (commodity intelligence) and pSignals (agent commerce), instantiated for ICU clinical data domains. The Alignment Coordinator does not know what domain it is aligning. The safety primitives validated by mSignals against MIMIC-IV generalize to every domain where competing data sources must be aligned before a consequential action is taken.
+  </div>
+
+  <div class="footer">
+    Developed by the <a href="https://aligned-institute.com" target="_blank" rel="noopener">Aligned Sovereign Intelligence Institute</a> &middot; team@asiinst.com &middot; July 2026
+  </div>
+</div>
+</body>
+</html>
+
+<!-- Force Night Theme -->
+<style>
+  html,
+  body,
+  body.ali-night,
+  body.dracula-active {
+    background: #0d1229 !important;
+    background-color: #0d1229 !important;
+    color: #e8eaf6 !important;
+    color-scheme: dark !important;
+  }
+
+  #theme-toggle,
+  .theme-toggle,
+  #dark-mode-toggle,
+  .dark-mode-toggle,
+  #day-night-toggle,
+  .day-night-toggle,
+  .theme-switcher,
+  #theme-switcher {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+</style>
+
+<script>
+  (function() {
+    function forceNightTheme() {
+      if (!document.body.classList.contains("ali-night")) {
+        document.body.classList.add("ali-night");
+      }
+      if (!document.body.classList.contains("dracula-active")) {
+        document.body.classList.add("dracula-active");
+      }
+    }
+
+    if (document.body) {
+      forceNightTheme();
+    } else {
+      document.addEventListener("DOMContentLoaded", forceNightTheme);
+    }
+
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.attributeName === "class") {
+          forceNightTheme();
+        }
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      observer.observe(document.body, { attributes: true });
+
+      const toggleSelectors = [
+        '#theme-toggle', '.theme-toggle', '#dark-mode-toggle', '.dark-mode-toggle',
+        '#day-night-toggle', '.day-night-toggle', '.theme-switcher', '#theme-switcher'
+      ];
+
+      toggleSelectors.forEach(function(selector) {
+        document.querySelectorAll(selector).forEach(function(el) {
+          el.style.display = 'none';
+        });
+      });
+    });
+  })();
+</script>

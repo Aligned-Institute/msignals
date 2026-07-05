@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mSignals — ICU Multi-Agent Patient State Alignment FAQ</title>
+    <meta name="description" content="Frequently asked questions about mSignals, the multi-agent patient state alignment system for ICU acute care. Covers clinical design, agent architecture, conflict-aware synthesis, regulatory pathway, and MIMIC-IV validation strategy.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap');
+
+        :root {
+            --primary-color: #0891b2;
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container, .signals-faq-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 640px) {
+            .container, .signals-faq-container {
+                margin: 20px 10px;
+                padding: 24px 16px;
+            }
+        }
+
+        .signals-faq-container h1 {
+            font-family: 'Outfit', sans-serif;
+            color: #111827;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 2.25rem;
+            font-weight: 700;
+        }
+
+        .signals-faq-container h2 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary-color);
+            margin-top: 40px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .signals-faq-container .intro,
+        .signals-faq-container .disclaimer,
+        .signals-faq-container .version {
+            font-size: 0.95rem;
+            color: #4b5563;
+            margin-bottom: 20px;
+        }
+
+        .signals-faq-container .contact-box {
+            background-color: #f0fbff;
+            border-left: 4px solid var(--primary-color);
+            padding: 18px;
+            margin: 24px 0;
+            font-size: 0.95rem;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.7;
+        }
+
+        .signals-faq-container a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .signals-faq-container a:hover {
+            text-decoration: underline;
+        }
+
+        .signals-faq-container .contact-box a {
+            font-weight: 500;
+        }
+
+        .signals-faq-container ul,
+        .signals-faq-container ol {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+
+        .signals-faq-container li {
+            margin-bottom: 8px;
+        }
+
+        .signals-faq-container details {
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .signals-faq-container details:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .signals-faq-container details[open] {
+            border-color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .signals-faq-container summary {
+            background-color: #fff;
+            padding: 16px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            list-style: none;
+            position: relative;
+            transition: background-color 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            color: #1f2937;
+        }
+
+        .signals-faq-container summary:hover {
+            background-color: #f8f9fa;
+        }
+
+        .signals-faq-container details[open] summary {
+            background-color: rgba(8, 145, 178, 0.015);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .signals-faq-container summary::after {
+            content: '';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            transform: translateY(-50%) rotate(45deg);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .signals-faq-container details[open] summary::after {
+            transform: translateY(-20%) rotate(-135deg);
+        }
+
+        .signals-faq-container .answer {
+            padding: 20px;
+            background: #fff;
+            font-size: 0.98rem;
+            color: #374151;
+        }
+
+        .signals-faq-container .answer h4 {
+            margin-top: 18px;
+            margin-bottom: 8px;
+            color: #1f2937;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .signals-faq-container .answer ul {
+            padding-left: 20px;
+        }
+
+        .signals-faq-container .highlight {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .signals-faq-container code {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .signals-faq-container pre {
+            background-color: #f8fafc;
+            color: #0f172a;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+            line-height: 1.5;
+            margin: 16px 0;
+        }
+
+        /* Dark mode */
+        body.ali-night,
+        body.dracula-active {
+            --primary-color: #22d3ee;
+            --bg-color: transparent;
+            --text-color: #ffffff;
+            --border-color: rgba(255, 255, 255, 0.08);
+            background-color: transparent !important;
+        }
+
+        body.ali-night .container,
+        body.dracula-active .container,
+        body.ali-night .signals-faq-container,
+        body.dracula-active .signals-faq-container {
+            background: rgba(15, 23, 42, 0.45) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+            border-radius: 16px !important;
+        }
+
+        @media (max-width: 640px) {
+            body.ali-night .container,
+            body.dracula-active .container,
+            body.ali-night .signals-faq-container,
+            body.dracula-active .signals-faq-container {
+                padding: 24px 16px !important;
+            }
+        }
+
+        body.ali-night .signals-faq-container *,
+        body.dracula-active .signals-faq-container * {
+            background-color: transparent;
+            color: #e2e8f0;
+        }
+
+        body.ali-night .signals-faq-container h1,
+        body.dracula-active .signals-faq-container h1 {
+            color: #ffffff !important;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+            background: transparent !important;
+        }
+
+        body.ali-night .signals-faq-container h2,
+        body.dracula-active .signals-faq-container h2 {
+            color: #22d3ee !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            background: transparent !important;
+        }
+
+        body.ali-night .signals-faq-container p,
+        body.dracula-active .signals-faq-container p,
+        body.ali-night .signals-faq-container li,
+        body.dracula-active .signals-faq-container li,
+        body.ali-night .signals-faq-container ul,
+        body.dracula-active .signals-faq-container ul,
+        body.ali-night .signals-faq-container ol,
+        body.dracula-active .signals-faq-container ol {
+            color: #e2e8f0 !important;
+            background-color: transparent !important;
+        }
+
+        body.ali-night .signals-faq-container strong,
+        body.dracula-active .signals-faq-container strong {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        body.ali-night .signals-faq-container a,
+        body.dracula-active .signals-faq-container a {
+            color: #22d3ee !important;
+            background: transparent !important;
+        }
+
+        body.ali-night .signals-faq-container a:hover,
+        body.dracula-active .signals-faq-container a:hover {
+            color: #67e8f9 !important;
+        }
+
+        body.ali-night .signals-faq-container summary::after,
+        body.dracula-active .signals-faq-container summary::after {
+            border-color: #22d3ee !important;
+        }
+
+        body.ali-night .signals-faq-container details,
+        body.dracula-active .signals-faq-container details {
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            background-color: rgba(255, 255, 255, 0.02) !important;
+        }
+
+        body.ali-night .signals-faq-container details[open],
+        body.dracula-active .signals-faq-container details[open] {
+            border-left-color: #22d3ee !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        body.ali-night .signals-faq-container details[open] summary,
+        body.dracula-active .signals-faq-container details[open] summary {
+            border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+            background-color: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        body.ali-night .signals-faq-container details summary,
+        body.ali-night .signals-faq-container details summary *,
+        body.dracula-active .signals-faq-container details summary,
+        body.dracula-active .signals-faq-container details summary * {
+            background-color: transparent !important;
+            color: #ffffff !important;
+        }
+
+        body.ali-night .signals-faq-container details summary:hover,
+        body.dracula-active .signals-faq-container details summary:hover {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        body.ali-night .signals-faq-container .answer,
+        body.dracula-active .signals-faq-container .answer,
+        body.ali-night .signals-faq-container .answer *,
+        body.dracula-active .signals-faq-container .answer * {
+            background: transparent !important;
+            color: #e2e8f0 !important;
+        }
+
+        body.ali-night .signals-faq-container .answer h4,
+        body.dracula-active .signals-faq-container .answer h4 {
+            color: #ffffff !important;
+        }
+
+        body.ali-night .signals-faq-container .contact-box,
+        body.dracula-active .signals-faq-container .contact-box {
+            background: rgba(34, 211, 238, 0.08) !important;
+            border-left: 4px solid #22d3ee !important;
+            color: #e2e8f0 !important;
+        }
+
+        body.ali-night .signals-faq-container .contact-box *,
+        body.dracula-active .signals-faq-container .contact-box * {
+            background-color: transparent;
+            color: #e2e8f0 !important;
+        }
+
+        body.ali-night .signals-faq-container .disclaimer,
+        body.dracula-active .signals-faq-container .disclaimer,
+        body.ali-night .signals-faq-container .disclaimer *,
+        body.dracula-active .signals-faq-container .disclaimer * {
+            color: #9ca3af !important;
+        }
+
+        body.ali-night .signals-faq-container .intro,
+        body.dracula-active .signals-faq-container .intro,
+        body.ali-night .signals-faq-container .version,
+        body.dracula-active .signals-faq-container .version {
+            color: #ffffff !important;
+        }
+
+        body.ali-night .signals-faq-container .highlight,
+        body.dracula-active .signals-faq-container .highlight {
+            background-color: rgba(251, 191, 36, 0.15) !important;
+            color: #fcd34d !important;
+        }
+
+        body.ali-night .signals-faq-container code,
+        body.dracula-active .signals-faq-container code {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+            color: #22d3ee !important;
+        }
+
+        body.ali-night .signals-faq-container pre,
+        body.dracula-active .signals-faq-container pre {
+            background-color: rgba(0, 0, 0, 0.25) !important;
+            color: #e2e8f0 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container signals-faq-container" id="signals-faq-root">
+        <h1>mSignals — ICU Patient State Alignment FAQ</h1>
+        <div class="version">Version 1.0 | July 2026</div>
+
+        <p class="intro">mSignals is the healthcare vertical of the ALI Multi-Agent Signals (MAS) platform. It applies multi-agent data alignment architecture to ICU acute care monitoring — assigning independent agents to each clinical data domain, enforcing freshness and confidence contracts on each agent, and synthesizing an aligned patient state where inter-agent conflicts are first-class clinical outputs rather than noise to be averaged away. The result is an architecture capable of detecting compound deterioration patterns — sepsis, AKI, respiratory failure — that no existing single-model or score-fusion system can surface.</p>
+
+        <div class="contact-box">
+            <strong>Quick Links:</strong><br>
+            Whitepaper: <a href="https://drive.google.com/file/d/1UamcqqMhAn0mfmiV457owTnXBG_dL7AR/view?usp=sharing" target="_blank" rel="noopener">mSignals: Multi-Agent Patient State Alignment for Acute Care</a> &nbsp;|&nbsp;
+            Build Plan: <a href="https://github.com/Aligned-Institute/msignals/blob/main/docs/msignals-build-plan.md" target="_blank" rel="noopener">mSignals Phase 0–5 Build Plan</a> &nbsp;|&nbsp;
+            Platform: <a href="https://asiinst.com" target="_blank" rel="noopener">asiinst.com</a>
+        </div>
+
+        <!-- PART 1 -->
+        <h2>Part 1: Introduction &amp; Clinical Problem</h2>
+        <p class="intro">For clinicians, researchers, and principal investigators new to the project.</p>
+
+        <details>
+            <summary>1.1 What problem does mSignals solve?</summary>
+            <div class="answer">
+                <p>ICU patients generate data across five independent systems simultaneously — bedside monitors, laboratory information systems, pharmacy/CPOE, clinical notes, and patient history records. Each system alarms independently against its own thresholds. None of them know what the others are seeing.</p>
+                <p>The consequence is <strong>compound deterioration that no single system detects until it is late-stage.</strong> Sepsis, the archetypal compound failure, manifests as simultaneous drift across cardiac, respiratory, renal, and inflammatory markers over a 6–12 hour window. Any individual monitor captures one dimension of that drift. No existing system aligns them.</p>
+                <p>mSignals provides that alignment layer. The core insight: <span class="highlight">when a vital signs agent says the patient is stable and a laboratory agent says lactate is climbing, the divergence between those two agents is the sepsis early warning</span> — not the average of their outputs. This is a capability that requires an agent architecture. It cannot be retrofitted onto a monolithic model or a score-fusion pipeline.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>1.2 Why is the ICU the right starting point?</summary>
+            <div class="answer">
+                <p>The ICU is the highest-acuity, highest-data-density care environment in medicine — and the one where the alignment problem is most consequential. Three facts make it the right entry point:</p>
+                <ul>
+                    <li><strong>Alarm fatigue is at crisis level.</strong> Modern ICUs generate approximately 700 alarms per patient per day, of which an estimated 94–99% are false positives (Johns Hopkins, 2023). Clinicians have adapted by suppressing alarms — a behavioral response now implicated in a significant proportion of ICU sentinel events and designated a National Patient Safety Goal by the Joint Commission.</li>
+                    <li><strong>The compound deterioration problem is most visible here.</strong> Sepsis costs the US healthcare system approximately $24 billion annually. The majority of preventable sepsis deaths involve delayed recognition — specifically, the failure to synthesize compound signals that each fell below individual alarm thresholds.</li>
+                    <li><strong>The data is already there.</strong> ICUs generate more clinical data per patient per hour than any other care setting. The problem is not data availability. It is a lack of alignment across data.</li>
+                </ul>
+                <p>The ICU also provides the clearest validation framework: MIMIC-IV, the standard de-identified ICU research dataset (40,000+ stays, Beth Israel Deaconess Medical Center), is publicly available and provides a rigorous retrospective validation environment before any live clinical deployment.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>1.3 What is conflict-aware synthesis, and why does it matter?</summary>
+            <div class="answer">
+                <p>Every existing ICU monitoring system that uses machine learning performs <strong>signal fusion</strong>: it takes inputs from multiple data sources, applies learned weights, and produces a single output score. When inputs disagree, fusion averages the disagreement away. The score hides the conflict.</p>
+                <p>mSignals performs <strong>conflict-aware synthesis</strong>: when agents disagree, the disagreement is the primary output — not a problem to be resolved before the output is produced.</p>
+                <p>Concretely: if the VAS agent (vital signs) reports the patient is hemodynamically compensated, but the LRA agent (laboratory) reports lactate is climbing post-vasopressor wean — that divergence is the sepsis early warning. A fusion model would average these inputs and produce a moderate score that doesn't alarm. mSignals surfaces the conflict explicitly: <em>"VAS says stable. LRA says metabolic deterioration is ongoing. Here is why that disagreement matters and what to do."</em></p>
+                <p>This requires an agent architecture. A single model has no concept of inter-domain disagreement because it has no domains — only features. The conflict can only be made visible if the agents are kept separate long enough for their outputs to be compared before synthesis.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>1.4 What are the five mSignals ICU agents?</summary>
+            <div class="answer">
+                <p>Each agent owns exactly one clinical data domain and operates under a Governor Contract defining its data freshness TTL, publish threshold, gate threshold, and escalation conditions.</p>
+                <ul>
+                    <li><strong>VAS — Vital Signs Agent:</strong> Bedside monitor (HR, SpO2, BP, RR, Temp). TTL: 30 seconds. The highest-frequency, most time-sensitive agent. Escalates on HR &gt;130, SpO2 &lt;88%, MAP &lt;65 mmHg, RR &gt;30.</li>
+                    <li><strong>LRA — Lab Results Agent:</strong> Laboratory information system (lactate, WBC, creatinine, INR). TTL: 6 hours. Escalates on lactate &gt;2.0 mmol/L, rising lactate trend, WBC abnormality, creatinine rise ≥0.3 from baseline.</li>
+                    <li><strong>PHA — Pharmacy Agent:</strong> CPOE / active medication orders (drug interactions, nephrotoxins, anticoagulants). TTL: event-driven (each new order triggers a fresh fetch). Publish threshold: 0.99 — the highest confidence requirement of any agent because drug safety errors are irreversible.</li>
+                    <li><strong>NLA — Notes / NLP Agent:</strong> Clinical notes analyzed via BioClinicalBERT for deterioration sentiment and keywords (accessory muscles, increased work of breathing, altered mental status, edema). TTL: 4 hours. The only agent covering what clinicians write down.</li>
+                    <li><strong>HIA — History / Context Agent:</strong> Patient history, prior diagnoses, comorbidities (prior sepsis, CKD, CHF, immunocompromise). TTL: 24 hours. Provides the longitudinal context that makes current signals interpretable.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>1.5 What clinical deterioration patterns does mSignals detect?</summary>
+            <div class="answer">
+                <p>mSignals defines compound detection rules for five ICU deterioration patterns. Each rule requires multi-agent convergence — no single agent can trigger it alone.</p>
+                <ul>
+                    <li><strong>Sepsis (qSOFA + SIRS compound):</strong> Any 3+ of four independent agents — VAS (HR &gt;100 + hemodynamic instability), LRA (WBC abnormal + lactate &gt;2.0), HIA (prior sepsis in history), PHA (active antibiotics). HIA and PHA each count separately toward the convergence threshold. Critically, <span class="highlight">VAS stable + LRA lactate rising is itself a trigger</span> — this conflict pattern detects sepsis before individual thresholds breach.</li>
+                    <li><strong>Acute Kidney Injury (KDIGO Stage 1+):</strong> Creatinine rise ≥0.3 mg/dL (LRA) + MAP &lt;65 mmHg sustained (VAS) + active nephrotoxin (PHA). Three-agent convergence.</li>
+                    <li><strong>Respiratory Failure:</strong> SpO2 &lt;88% + RR &gt;30 on 15-minute trajectory (VAS) — triggers autonomous Tier-4 alert without waiting for other agents. Confirmed by NLA deterioration keywords.</li>
+                    <li><strong>Drug-Physiology Conflict:</strong> Active anticoagulant + drug interaction detected (PHA) + INR &gt;3.5 (LRA). Always pharmacist-gated — no autonomous action permitted.</li>
+                    <li><strong>Fluid Overload:</strong> Total IV fluid &gt;6L/24h (PHA) + SpO2 declining + RR rising (VAS) + NLA keywords (crackles, edema). Four-agent convergence for highest confidence.</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- PART 2 -->
+        <h2>Part 2: Clinical Dashboard Design</h2>
+        <p class="intro">For clinicians, nurses, and UX reviewers evaluating the dashboard.</p>
+
+        <details>
+            <summary>2.1 Why doesn't the dashboard show a risk score?</summary>
+            <div class="answer">
+                <p>A score puts the cognitive burden on the clinician: <em>"Is 74 bad enough to call the attending at 3am?"</em> A conflict narrative removes it: <em>"VAS says stable. LRA says lactate is climbing. Hold the vasopressor wean and recheck in two hours."</em></p>
+                <p>Risk scores fail in two ways that conflict-aware synthesis does not:</p>
+                <ol>
+                    <li><strong>They hide the basis for the recommendation.</strong> A score of 74 tells a nurse nothing about which data domains are driving it, which are stale, or which are in disagreement. The FDA's 21st Century Cures Act (Section 3060) requires that clinical decision support allow the clinician to independently review the basis for any recommendation. A latent model score does not satisfy this. Agent-level attribution does.</li>
+                    <li><strong>They conflate convergent confidence with divergent uncertainty.</strong> A score of 0.80 could mean all agents agree the patient is moderately at risk, or it could mean one agent says critical and another says fine — the average is 0.80. Those two situations require completely different clinical responses. mSignals shows which one you're in.</li>
+                </ol>
+            </div>
+        </details>
+
+        <details>
+            <summary>2.2 What does the Nurse View show?</summary>
+            <div class="answer">
+                <p>The Nurse View is action-oriented and score-free. It answers one question: <em>what does this patient need right now, and which data needs to be refreshed?</em></p>
+                <ul>
+                    <li><strong>Patient header:</strong> Bed, name, age/sex, ICU admission duration, and an aligned state badge — either green "ALIGNED" or amber "⚠ DIVERGENCE DETECTED."</li>
+                    <li><strong>Agent Status Grid:</strong> Five rows, one per agent, showing freshness status (FRESH / STALE Xh Ym), confidence, and escalation flag count. Stale agents show an explicit prompt: "Document or flag." The freshness of a clinical note is itself a clinical signal — a 4-hour-old note in a deteriorating patient is an action item.</li>
+                    <li><strong>Conflict Panel:</strong> When agents disagree, this is the most visually prominent element on the screen. It shows each agent's position in plain English and the resolution directive — which agent is weighted primary and why.</li>
+                    <li><strong>Timeline:</strong> Six-hour trend charts for HR, SpO2, lactate, and WBC — event markers for each Human Gate action on the same timeline.</li>
+                    <li><strong>Gate alert banner:</strong> Tier-3 notifications and Tier-4 autonomous actions pin to the top of the view. The Tier-4 banner pulses red.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>2.3 What does the Doctor View add?</summary>
+            <div class="answer">
+                <p>The Doctor View shows the same aligned patient state with full attribution depth — designed for the attending who needs to understand the basis for a recommendation, not just act on it.</p>
+                <ul>
+                    <li><strong>Agent Telemetry Cards:</strong> Full readout per agent — raw confidence, staleness penalty applied, escalation flags as tagged chips, and the agent's <code>raw_text</code> summary of what it observed.</li>
+                    <li><strong>Conflict Registry:</strong> One card per active conflict with the conflicting agents named, each agent's position stated, the resolution directive, and the confidence penalty applied for the divergence.</li>
+                    <li><strong>Suppressed Signals:</strong> Agents below gate threshold are logged but collapsed — the doctor can see what was suppressed and why, which matters for cases where a suppressed signal later becomes relevant.</li>
+                    <li><strong>Immutable Audit Log:</strong> Every Human Gate action — conflict flagged, agent suppressed, interaction clear, autonomous action fired, clinician override — is logged with agent ID, confidence, tier, and timestamp. This is the HIPAA audit trail and the 510(k) post-market surveillance record in one artifact.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>2.4 What is the Human Gate Model?</summary>
+            <div class="answer">
+                <p>The Human Gate Model governs which actions require clinician confirmation and which can be taken autonomously, based on compound confidence and clinical severity. It has four tiers:</p>
+                <ul>
+                    <li><strong>Tier 1 — Suppress</strong> (compound confidence &lt;0.60): Logged only. No alert generated. Available in the audit trail for retrospective review.</li>
+                    <li><strong>Tier 2 — Passive Advisory</strong> (0.60–0.80 or low severity): Appears in the dashboard. No interrupt. Review at convenience — does not page or push.</li>
+                    <li><strong>Tier 3 — Active Notification</strong> (0.80–0.92 or medium severity): Push notification to the responsible clinician. Review and confirmation required before any clinical action is taken.</li>
+                    <li><strong>Tier 4 — Autonomous Action</strong> (&gt;0.92 + high severity): Rapid response paged. Order pre-populated for one-click clinician confirm. Currently limited to respiratory failure (SpO2 &lt;88% + RR &gt;30 on confirmed 15-minute trajectory).</li>
+                </ul>
+                <p>Every tier — including suppressed signals — is written to the immutable audit log. The Human Gate is not an alert filter; it is a clinical governance layer with a complete, auditable record of every decision made or not made.</p>
+            </div>
+        </details>
+
+        <!-- PART 3 -->
+        <h2>Part 3: Technical Architecture</h2>
+        <p class="intro">For software engineers, data scientists, and technical reviewers.</p>
+
+        <details>
+            <summary>3.1 How are Governor Contracts structured?</summary>
+            <div class="answer">
+                <p>Each agent operates under a <code>AgentContract</code> data structure that defines its behavioral envelope. No agent can publish output that violates its contract.</p>
+                <pre>AgentContract(
+    agent_id        = 'lra',
+    dispatch        = 'event',
+    confidence_threshold  = 0.85,   # minimum to publish
+    gate_threshold        = 0.65,   # minimum to enter compound scoring
+    freshness_ttl_seconds = 21600,  # 6 hours
+    staleness_penalty     = 0.10,   # confidence deduction per TTL breach
+    escalation_conditions = [
+        'lactate_gt_2', 'lactate_rising',
+        'wbc_high', 'wbc_low', 'creatinine_rise'
+    ]
+)</pre>
+                <p>The staleness penalty is applied by the coordinator before any compound rule evaluation. An LRA result that is 12 hours old (2× past its 6-hour TTL) has its confidence reduced by 0.20 before entering the conflict detection step. This means temporal misalignment between agents is an explicit, quantified input to the compound rules — not an invisible assumption.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>3.2 How does the ICU Coordinator produce the Aligned Patient State?</summary>
+            <div class="answer">
+                <p>The <code>ICUCoordinator.align()</code> method runs five sequential steps on each evaluation cycle:</p>
+                <ol>
+                    <li><strong>Fetch:</strong> Calls <code>fetch(patient_id)</code> on all five agents concurrently. Each agent reads from its data source (MIMIC tables in validation; live clinical system in deployment) and returns an <code>AgentOutput</code>.</li>
+                    <li><strong>Staleness penalty:</strong> Applies the <code>_apply_staleness_penalty()</code> method to each output, reducing confidence based on time past TTL.</li>
+                    <li><strong>Gate filter:</strong> Agents below their <code>gate_threshold</code> are excluded from compound scoring (logged as suppressed).</li>
+                    <li><strong>Compound rules:</strong> All five detection functions run against the penalized outputs. Each returns a <code>CompoundResult</code> with <code>detected</code>, <code>conflict_detected</code>, <code>action_tier</code>, and <code>resolution_directive</code>.</li>
+                    <li><strong>State assembly:</strong> Results are assembled into an <code>ICUAlignedState</code> with a deterministic SHA-256 hash, version increment, and audit entry. The hash is the audit anchor — any downstream system can verify the state it acted on is the state the coordinator produced.</li>
+                </ol>
+            </div>
+        </details>
+
+        <details>
+            <summary>3.3 What is the tech stack?</summary>
+            <div class="answer">
+                <h4>Backend (Python)</h4>
+                <ul>
+                    <li>Python 3.13 — agent classes, Governor Contracts, ICU Coordinator, compound detection rules</li>
+                    <li>Pandas — MIMIC-IV table reads and patient stream replay</li>
+                    <li>BioClinicalBERT (<code>emilyalsentzer/Bio_ClinicalBERT</code>, HuggingFace) — NLA agent clinical note classification</li>
+                    <li>OpenFDA API — PHA agent drug interaction lookups</li>
+                    <li>FastAPI — REST interface for dashboard and downstream consumers (Phase 2)</li>
+                </ul>
+                <h4>Dashboard (Next.js)</h4>
+                <ul>
+                    <li>Next.js 16 (App Router) + TypeScript</li>
+                    <li><code>@xyflow/react</code> — 5-node agent graph with conflict edges and freshness color coding</li>
+                    <li>Recharts — 6-hour patient trend timelines (HR, SpO2, lactate, WBC)</li>
+                    <li>Tailwind CSS v4 + Shadcn/ui — clinical dark theme</li>
+                    <li>SWR — polling the patient state API route</li>
+                </ul>
+                <h4>Validation Data</h4>
+                <ul>
+                    <li>MIMIC-IV Demo v2.2 — 100 de-identified ICU stays, on disk, no credentials required</li>
+                    <li>MIMIC-IV v2.2 (full) — 40,000+ stays, PhysioNet credentialing in progress</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>3.4 What is MIMIC-IV and why is it the validation dataset?</summary>
+            <div class="answer">
+                <p>MIMIC-IV (Medical Information Mart for Intensive Care) is a de-identified database of ICU stays at Beth Israel Deaconess Medical Center in Boston. Version 2.2 contains over 40,000 adult ICU admissions with complete vital signs, laboratory results, medication orders, nursing notes, diagnoses, and mortality outcomes. It is maintained by the MIT Laboratory for Computational Physiology and is the standard dataset for ICU AI research.</p>
+                <p>It is the right validation dataset for mSignals for three reasons:</p>
+                <ul>
+                    <li><strong>No regulatory overhead for retrospective analysis.</strong> Running the compound detection rules against historical MIMIC data requires no FDA clearance, no IRB for human subjects research (the data is already de-identified and publicly available under a data use agreement), and no hospital partnership.</li>
+                    <li><strong>Schema parity with live clinical systems.</strong> MIMIC-IV's table structure (chartevents, labevents, prescriptions, diagnoses_icd, noteevents) maps directly to the data each mSignals agent would consume in a live Epic or Cerner integration. The <code>PatientStream</code> data layer is written once and works against both.</li>
+                    <li><strong>Three simultaneous deliverables.</strong> The MIMIC-IV validation study is the thesis proof, the enterprise sales tool for hospital procurement conversations, and the clinical evidence for FDA 510(k) submission — all in one artifact.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>3.5 How does the NLA agent analyze clinical notes?</summary>
+            <div class="answer">
+                <p>The NLA agent uses <strong>BioClinicalBERT</strong> — a BERT model pretrained on 2 million clinical notes from MIMIC-III — for zero-shot classification of nursing and physician notes. No fine-tuning is required for the PoC.</p>
+                <p>The pipeline has two layers:</p>
+                <ul>
+                    <li><strong>Embedding similarity classification:</strong> The input note is encoded to a [CLS] embedding and compared via cosine similarity against label embeddings ("Patient is deteriorating, in distress…" vs. "Patient is stable, comfortable…"). Sentiment (negative / neutral / positive) and deterioration detection are both handled this way.</li>
+                    <li><strong>Keyword extraction:</strong> A deterministic regex pass over 30 clinically-validated deterioration keywords runs on every note regardless of whether the NLP model is available — "increased work of breathing," "accessory muscles," "altered mental status," "crackles," "edema," and others. This is the fallback that ensures the agent never silently fails.</li>
+                </ul>
+                <p>If the BioClinicalBERT model cannot be loaded (no GPU, no network on first run), the agent falls back to keyword-only mode and sets <code>nlp_model: 'regex_fallback'</code> in its output. The compound detection rules still run — they just receive lower NLA confidence, which is the correct behavior.</p>
+                <p><strong>Note on MIMIC-IV Demo:</strong> The 100-patient demo dataset does not include clinical notes (stripped for re-identification reasons). Full NLA functionality requires either full MIMIC-IV credentials (in progress) or a live EHR integration. The agent runs in stub mode on the demo dataset.</p>
+            </div>
+        </details>
+
+        <!-- PART 4 -->
+        <h2>Part 4: Regulatory &amp; Compliance</h2>
+        <p class="intro">For legal, compliance, and clinical governance reviewers.</p>
+
+        <details>
+            <summary>4.1 What is the FDA regulatory pathway for mSignals?</summary>
+            <div class="answer">
+                <p>mSignals is designed for the FDA Software as Medical Device (SaMD) pathway as a Class II device with a 510(k) clearance route.</p>
+                <p>The 21st Century Cures Act (Section 3060) provides a statutory CDS carve-out for software that:</p>
+                <ol>
+                    <li>Is not intended to replace clinical judgment</li>
+                    <li>Displays the basis for each recommendation so a clinician can independently review it</li>
+                    <li>Does not primarily acquire, process, or analyze medical images or genomic data</li>
+                </ol>
+                <p>mSignals satisfies conditions 1 and 2 <em>structurally</em> — the Human Gate model and conflict registry are designed to make the basis for every recommendation independently reviewable at the agent level. For Tier-4 autonomous alerts (rapid response paging), which fall outside the CDS carve-out, the 510(k) predicate devices are Tandem Control-IQ (autonomous actuation with governor threshold) and Philips IntelliVue Guardian (ICU early warning auto-escalation).</p>
+                <p>The sequencing: MIMIC-IV retrospective validation (current) → observational pilot at a partner hospital (Phase 4) → 510(k) submission using both as clinical evidence. Entity: mSignals is an ALI vertical; FDA sponsorship is through ALI.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>4.2 How does mSignals handle HIPAA compliance?</summary>
+            <div class="answer">
+                <p>HIPAA compliance is addressed as a structural output of the architecture, not a separate compliance layer bolted on afterward.</p>
+                <ul>
+                    <li><strong>PHI encryption:</strong> All patient data encrypted in transit (TLS 1.3) and at rest (AES-256), retained within the customer's BAA-signed environment.</li>
+                    <li><strong>Audit trail:</strong> The immutable audit log produced by the Governor / Coordinator layer satisfies 45 CFR §164.312(b) audit control requirements. Every access, every suppressed signal, every autonomous action, and every clinician override is logged with timestamp, agent ID, confidence, and tier — queryable, exportable, and tamper-evident via state hash.</li>
+                    <li><strong>Minimum necessary:</strong> Each agent fetches only the data fields required for its own escalation conditions. VAS does not see pharmacy records. PHA does not see vital signs. This is architectural minimum-necessary, not a policy control.</li>
+                    <li><strong>Research phase:</strong> Current validation runs against MIMIC-IV, which is a de-identified dataset. No PHI is involved in the research phase.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>4.3 How does mSignals satisfy the 21st Century Cures Act "basis for recommendation" requirement?</summary>
+            <div class="answer">
+                <p>Section 3060 requires that a CDS tool display "the basis for the recommendation or alert" so that the clinician can independently review it without relying on the software's conclusion.</p>
+                <p>mSignals satisfies this structurally through the conflict registry and agent attribution system. Every recommendation includes:</p>
+                <ul>
+                    <li>Which agents contributed to the compound detection</li>
+                    <li>Each contributing agent's confidence (raw and post-staleness-penalty)</li>
+                    <li>The specific escalation flags each agent raised</li>
+                    <li>The resolution directive — which agent was weighted primary and why</li>
+                    <li>The audit trail of prior actions on the same patient state</li>
+                </ul>
+                <p>A clinician reviewing a sepsis Tier-3 alert sees: "LRA reported lactate 2.4 (rising from 1.8 six hours prior, conf: 0.91). VAS reported hemodynamic stability (conf: 0.88, no escalation flags). HIA confirmed prior sepsis episode. LRA weighted primary — lactate trend post-wean outweighs momentary pressure recovery as sepsis staging signal." That is an independently reviewable basis. A risk score of 0.74 is not.</p>
+            </div>
+        </details>
+
+        <!-- PART 5 -->
+        <h2>Part 5: Validation &amp; Research</h2>
+        <p class="intro">For the principal investigator, co-investigators, and journal reviewers.</p>
+
+        <details>
+            <summary>5.1 What is the MIMIC-IV validation study design?</summary>
+            <div class="answer">
+                <p>The validation study runs the mSignals compound detection rules retrospectively against the full MIMIC-IV dataset and compares against three benchmarks.</p>
+                <ul>
+                    <li><strong>Cohort:</strong> Adult ICU stays ≥24 hours (~22,000 stays after exclusions)</li>
+                    <li><strong>Primary outcomes:</strong> Sepsis (ICD A41.x), AKI (N17–N19), respiratory failure (J96.x), ICU mortality</li>
+                    <li><strong>Prediction horizon:</strong> 6 hours (detect deterioration 6 hours before clinical diagnosis)</li>
+                    <li><strong>Primary metric:</strong> AUROC</li>
+                    <li><strong>Alarm burden metric:</strong> True positive rate at fixed false positive rate of ≤2 alarms/patient/day</li>
+                </ul>
+                <h4>Comparison Arms</h4>
+                <ol>
+                    <li>Single-parameter threshold alarms (reproducing current standard of care)</li>
+                    <li>Epic Deterioration Index (published model coefficients, Brajer et al. 2020)</li>
+                    <li>SOFA score trajectory (standard ICU severity benchmark)</li>
+                    <li><strong>mSignals conflict-aware synthesis</strong> (primary arm)</li>
+                </ol>
+            </div>
+        </details>
+
+        <details>
+            <summary>5.2 What are the target performance metrics?</summary>
+            <div class="answer">
+                <p>Based on compound-signal literature (meta-analysis of 14 ICU early warning studies, <em>JAMA Internal Medicine</em>, 2024), multi-signal approaches outperform single-domain models by 18–24% in sensitivity at equivalent specificity. mSignals targets:</p>
+                <ul>
+                    <li><strong>Sepsis at 6h horizon:</strong> AUROC ≥ 0.82 (primary endpoint)</li>
+                    <li><strong>Alarm burden:</strong> ≤ 2 true-positive alarms per patient per day at the sensitivity target</li>
+                    <li><strong>Early detection advantage:</strong> Sepsis detected 60–90 minutes earlier than single-domain approaches at equivalent alarm burden</li>
+                    <li><strong>VAS/LRA conflict specificity:</strong> The pre-threshold divergence pattern (hemodynamically stable + lactate rising) should independently predict sepsis-3 criteria with AUROC &gt;0.78 — validating the core conflict-aware thesis without requiring three-agent convergence</li>
+                </ul>
+                <p>AKI three-agent convergence (PHA nephrotoxin + VAS hemodynamic + LRA creatinine) is expected to outperform individual-domain models by &gt;15% AUROC based on the published AKI prediction literature.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>5.3 What is the publication strategy?</summary>
+            <div class="answer">
+                <p>The MIMIC-IV validation study serves three simultaneous purposes — which is what makes it the single highest-leverage artifact in the mSignals development path:</p>
+                <ol>
+                    <li><strong>Thesis proof:</strong> Demonstrates that conflict-aware synthesis outperforms score fusion on real ICU data with a published, reproducible methodology</li>
+                    <li><strong>Enterprise sales tool:</strong> A peer-reviewed publication in a clinical informatics journal is the standard evidence package for hospital procurement conversations and IDN-level system decisions</li>
+                    <li><strong>510(k) clinical evidence:</strong> Retrospective validation on a publicly available, widely-cited dataset is accepted as part of the predicate evidence package for Class II SaMD submissions</li>
+                </ol>
+                <p><strong>Target journals:</strong> <em>Critical Care Medicine</em>, <em>JAMIA</em> (Journal of the American Medical Informatics Association), or <em>npj Digital Medicine</em> — all accept MIMIC-based computational methodology papers prior to live clinical validation. The MIMIC-III/IV citation count in these journals makes the methodology immediately credible to reviewers.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>5.4 What is the path from MIMIC validation to live clinical deployment?</summary>
+            <div class="answer">
+                <p>mSignals follows a five-phase deployment sequence designed to minimize regulatory risk while building the evidence base incrementally:</p>
+                <ul>
+                    <li><strong>Phase 0 (current):</strong> MIMIC-IV Demo data pipeline wired. Demo dashboard live. 24/24 backend tests passing.</li>
+                    <li><strong>Phase 1:</strong> Full MIMIC-IV access (PhysioNet credentialing in progress). Validation study runs. Conflict engine validated against real outcomes.</li>
+                    <li><strong>Phase 2:</strong> Research dashboard — read-only, no clinical action capability. FastAPI backend serving the Next.js dashboard from live MIMIC data. Manuscript drafted.</li>
+                    <li><strong>Phase 3:</strong> Observational pilot at a partner hospital — mSignals runs in parallel to existing systems, generates alerts, clinicians are not required to act. IRB protocol for prospective data collection. Publication submitted.</li>
+                    <li><strong>Phase 4:</strong> Advisory deployment — mSignals alerts are surfaced to clinicians as a recommended second opinion. 510(k) preparation begins using MIMIC + pilot data as clinical evidence.</li>
+                    <li><strong>Phase 5:</strong> Full clinical deployment with autonomous Tier-4 alerts (respiratory failure rapid response) under FDA clearance.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>5.5 How does mSignals relate to the broader MAS platform research program?</summary>
+            <div class="answer">
+                <p>mSignals is the healthcare vertical of the ALI Multi-Agent Signals platform. The core platform provides the domain-agnostic alignment primitives — Governor Contracts, staleness penalty math, conflict detection, the Canonical Aligned State schema, and the Human Gate model. mSignals instantiates these primitives for ICU clinical data domains.</p>
+                <p>Critically, the Alignment Coordinator does not know what domain it is aligning. The same conflict-aware synthesis that detects VAS/LRA sepsis divergence in an ICU detects price-data/macro-indicator divergence in cSignals (commodity intelligence) and payment-authorization/risk-signal divergence in pSignals (agent commerce). The safety primitives validated by mSignals generalize to every domain where competing data sources must be aligned before a consequential action is taken.</p>
+                <p>The ICU is the right domain to validate first because the consequences of misalignment are maximally visible — and maximally costly. A compound detection failure in an ICU results in a preventable death. That is the pressure test that proves the architecture is ready for deployment in any domain.</p>
+            </div>
+        </details>
+
+        <div class="contact-box">
+            <strong>Questions about the mSignals research program?</strong><br>
+            Principal Investigator: Dr. Gabriel Axel Montes &nbsp;|&nbsp;
+            Operational Lead: Anthony Monroy &nbsp;|&nbsp;
+            mSignals Project Lead: Ivan (PhysioNet credentialing &amp; MIMIC-IV validation)<br>
+            Platform: <a href="https://asiinst.com" target="_blank" rel="noopener">asiinst.com</a>
+        </div>
+
+        <div class="disclaimer">
+            <em>Disclaimer: mSignals is a research system currently in pre-clinical validation against de-identified data (MIMIC-IV). It is not approved for clinical use and does not constitute medical advice. All clinical decisions remain the responsibility of licensed healthcare professionals. Please review the <a href="https://asiinst.com/terms-and-conditions/">Terms and Conditions</a> for further details.</em>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
